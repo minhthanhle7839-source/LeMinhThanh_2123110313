@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+using LeMinhThanh_2123110313.Models;
 
 namespace LeMinhThanh_2123110313.Controllers
 {
@@ -8,36 +7,71 @@ namespace LeMinhThanh_2123110313.Controllers
     [ApiController]
     public class CategoryController : ControllerBase
     {
-        // GET: api/<CategoryController>
+
+        // dữ liệu giả
+        private static List<Category> categories = new List<Category>
+        {
+            new Category { Id = 1, Name = "Laptop", Description = "Laptop products" },
+            new Category { Id = 2, Name = "Phone", Description = "Mobile phones" },
+            new Category { Id = 3, Name = "Accessory", Description = "Accessories" }
+        };
+
+        // GET: api/category
         [HttpGet]
-        public IEnumerable<string> Get()
+        public IActionResult Get()
         {
-            return new string[] { "value1", "value2" };
+            return Ok(categories);
         }
 
-        // GET api/<CategoryController>/5
+        // GET api/category/1
         [HttpGet("{id}")]
-        public string Get(int id)
+        public IActionResult Get(int id)
         {
-            return "value";
+            var category = categories.FirstOrDefault(c => c.Id == id);
+
+            if (category == null)
+                return NotFound("Category not found");
+
+            return Ok(category);
         }
 
-        // POST api/<CategoryController>
+        // POST api/category
         [HttpPost]
-        public void Post([FromBody] string value)
+        public IActionResult Post([FromBody] Category category)
         {
+            category.Id = categories.Max(c => c.Id) + 1;
+            categories.Add(category);
+
+            return Ok(category);
         }
 
-        // PUT api/<CategoryController>/5
+        // PUT api/category/1
         [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        public IActionResult Put(int id, [FromBody] Category updatedCategory)
         {
+            var category = categories.FirstOrDefault(c => c.Id == id);
+
+            if (category == null)
+                return NotFound("Category not found");
+
+            category.Name = updatedCategory.Name;
+            category.Description = updatedCategory.Description;
+
+            return Ok(category);
         }
 
-        // DELETE api/<CategoryController>/5
+        // DELETE api/category/1
         [HttpDelete("{id}")]
-        public void Delete(int id)
+        public IActionResult Delete(int id)
         {
+            var category = categories.FirstOrDefault(c => c.Id == id);
+
+            if (category == null)
+                return NotFound("Category not found");
+
+            categories.Remove(category);
+
+            return Ok("Deleted successfully");
         }
     }
 }
